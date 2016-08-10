@@ -1,0 +1,26 @@
+{
+  "name": "ts-logger",
+  "version": "1.0.0",
+  "description": "ts-logger module integrates Graylog, file logger and console log together",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tetrascience/ts-logger.git"
+  },
+  "author": "Peng Wei pwei@tetrascience.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tetrascience/ts-logger/issues"
+  },
+  "homepage": "https://github.com/tetrascience/ts-logger",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "file-stream-rotator": "0.0.7",
+    "graygelf": "^1.0.0",
+    "mkdirp": "^0.5.1",
+    "moment": "^2.14.1"
+  }
+}
