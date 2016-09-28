@@ -8,4 +8,4 @@ $ npm install tetrascience/ts-logger --save
 ```
 
 ## Usage
-You have to first `require('ts-logger')(transport, config)` passing in the correct transport and config information.
+You have to first `require('ts-logger')(transport, config)` passing in the correct transport and config information. More documentation can be found at https://tetrascience.atlassian.net/wiki/display/TSD/ts-logger
