@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/tetrascience/ts-logger.git"
   },
-  "author": "Peng Wei pwei@tetrascience.com",
+  "author": "TetraScience developers@tetrascience.com",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/tetrascience/ts-logger/issues"
@@ -20,7 +20,12 @@
     "colors": "^1.1.2",
     "file-stream-rotator": "0.0.7",
     "graygelf": "^1.0.0",
+    "lodash": "^4.17.4",
     "mkdirp": "^0.5.1",
     "moment": "^2.14.1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mockery": "^2.0.0"
   }
 }

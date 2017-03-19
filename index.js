@@ -1,14 +1,47 @@
-/**
- * Created by pengwei on 2/23/16.
- */
 
-module.exports = function(transport, config){
+const _ = require('lodash');
+const NODE_ENV = process.env.NODE_ENV;
+const types = {
+    UNKNOWN: 'unknown'
+};
+
+const services = {
+    UNKNOWN: 'unknown'
+};
+
+
+
+let logger = function(transport, config){
+    let tslogger;
+
+    if (!_.isObject(config)){
+        console.log('should pass a config object to logger');
+        config = {};
+    }
+
+
+
     switch(transport){
         case 'file':
-            return require('./lib/file-logger')(config);
+            tslogger = require('./lib/file-logger')(config);
         case 'graylog':
-            return require('./lib/graylog-logger')(config);
+            tslogger = require('./lib/graylog-logger')(config);
         default:
-            return require('./lib/console-logger')(config);
+            tslogger = require('./lib/console-logger')(config);
     }
+
+
+
+
+    for (let method in tslogger){
+        let originalFn = tslogger[method];
+        tslogger[method] = decorate(originalFn);
+    }
+
+
+    return tslogger;
 };
+
+
+module.exports = logger;
+
