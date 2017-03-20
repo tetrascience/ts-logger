@@ -8,30 +8,32 @@ const consoleLogger = require('./lib/console-logger');
 
 
 let logger = function(transport, config){
-    let tslogger;
+    let baseLogger;
 
     if (!_.isObject(config)){
         console.log('should pass a config object to logger');
         config = {};
     }
 
+    // pick the base logger according to the transport
     switch(transport){
         case 'file':
-            tslogger = fileLogger(config);
+            baseLogger = fileLogger(config);
             break;
         case 'graylog':
-            tslogger = graylogLogger(config);
+            baseLogger = graylogLogger(config);
             break;
         default:
-            tslogger = consoleLogger(config);
+            baseLogger = consoleLogger(config);
     }
 
-    for (let method in tslogger){
-        let originalFn = tslogger[method];
-        tslogger[method] = decorate(originalFn,config);
+    // decorate the base logger
+    for (let method in baseLogger){
+        let originalFn = baseLogger[method];
+        baseLogger[method] = decorate(originalFn,config);
     }
 
-    return tslogger;
+    return baseLogger;
 };
 
 

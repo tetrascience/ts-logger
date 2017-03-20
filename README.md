@@ -1,6 +1,7 @@
 # ts-logger
 
-ts-logger module integrates Graylog, file logger and console log together. Depending on the environment settings, the logger will be sending logs to different "transport".
+ts-logger module integrates Graylog, file logger and console log together. 
+Based on the chosen transport, the logger will be sending logs to different destinations.
 
 ## Installation
 ```sh
@@ -8,4 +9,18 @@ $ npm install tetrascience/ts-logger --save
 ```
 
 ## Usage
-You have to first `require('ts-logger')(transport, config)` passing in the correct transport and config information. More documentation can be found at https://tetrascience.atlassian.net/wiki/display/TSD/ts-logger
+
+### `graylog`
+```
+require('ts-logger')('graylog', {
+   graylogHost: 'http://localhost',
+   graylogPort: '12201'
+})
+```
+ 
+### `console`
+### `file` 
+
+
+## Reference
+More documentation can be found at https://tetrascience.atlassian.net/wiki/display/TSD/ts-logger

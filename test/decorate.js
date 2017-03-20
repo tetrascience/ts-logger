@@ -10,7 +10,7 @@ var decorate = require('../util/decorate.js');
 
 
 describe('logger', function () {
-    afterAll(function(done){
+    after(function(done){
         done();
     });
 

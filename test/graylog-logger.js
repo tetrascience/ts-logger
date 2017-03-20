@@ -21,7 +21,7 @@ var graylogLogger = require('../lib/graylog-logger.js');
 
 describe('graylog-logger',function(){
 
-    afterAll(function(done){
+    after(function(done){
         mockery.deregisterAll();
         done();
     });
