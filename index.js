@@ -1,6 +1,7 @@
 "use strict";
 
 const _ = require('lodash');
+const assert = require('assert');
 const decorate = require('./util/decorate.js');
 const graylogLogger = require('./lib/graylog-logger');
 const fileLogger = require('./lib/file-logger');
@@ -10,10 +11,7 @@ const consoleLogger = require('./lib/console-logger');
 let logger = function(transport, config){
     let baseLogger;
 
-    if (!_.isObject(config)){
-        console.log('should pass a config object to logger');
-        config = {};
-    }
+    assert(!config || _.isObject(config), 'the second argument, if available, must be a config object');
 
     // pick the base logger according to the transport
     switch(transport){

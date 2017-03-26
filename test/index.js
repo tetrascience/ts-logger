@@ -4,38 +4,70 @@ const chai = require('chai');
 const expect = chai.expect;
 const mockery = require('mockery');
 
-mockery.enable();
-mockery.warnOnUnregistered(false);
 
+describe('index', function () {
 
-var decorateCount = 0;
-var logCount = 0
-var graylogMock = function(){
-    return {
-        info: function(arg) {logCount ++; return arg;},
-        debug: function(arg) {logCount++; return arg;}
-    }
-};
+    beforeEach(function (done) {
+        mockery.enable({ useCleanCache: true });
+        mockery.warnOnUnregistered(false);
+        done();
+    });
 
-var decorateMock = function(fn){
-    decorateCount++;
-    return fn;
-};
-
-mockery.registerMock('./lib/graylog-logger',graylogMock);
-mockery.registerMock('./util/decorate.js', decorateMock);
-
-var logger = require('../index.js')('graylog',{});
-
-describe('index', function(){
-    after(function(done){
+    afterEach(function (done) {
+        mockery.resetCache();
         mockery.deregisterAll();
         done();
     });
 
-    it('Should be able to log a message', function(done){
+    it('Should be able to decorate the base logger', function (done) {
+
+        let decorateCount = 0;
+
+        let decorateMock = function (fn) {
+            decorateCount++;
+            return fn;
+        };
+
+        let graylogMock = function () {
+            return {
+                info: function (arg) {
+                    logCount++;
+                    return arg;
+                },
+                debug: function (arg) {
+                    return arg;
+                }
+            }
+        };
+
+        mockery.registerMock('./util/decorate.js', decorateMock);
+        mockery.registerMock('./lib/graylog-logger', graylogMock);
+
+        let logger = require('../index.js')('graylog', {});
 
         expect(decorateCount).to.equal(2);
+        done();
+    });
+
+    it('Should be able to invoke the proper function in the transport', function (done) {
+
+        let logCount = 0;
+        let graylogMock = function () {
+            return {
+                info: function (arg) {
+                    logCount++;
+                    return arg;
+                },
+                debug: function (arg) {
+                    logCount++;
+                    return arg;
+                }
+            }
+        };
+
+        mockery.registerMock('./lib/graylog-logger', graylogMock);
+
+        let logger = require('../index.js')('graylog', {});
         logger.info('test');
         logger.debug('test');
         expect(logCount).to.equal(2);

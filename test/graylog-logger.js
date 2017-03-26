@@ -4,24 +4,17 @@ const chai = require('chai');
 const expect = chai.expect;
 const mockery = require('mockery');
 
-mockery.enable();
-mockery.warnOnUnregistered(false);
-
-const graygelfMock = function(){
-   return {
-       raw : function(arg) { return arg; }
-   }
-};
-
-
-mockery.registerMock('graygelf',graygelfMock);
-
-
-var graylogLogger = require('../lib/graylog-logger.js');
 
 describe('graylog-logger',function(){
 
-    after(function(done){
+    beforeEach(function(done){
+        mockery.enable({ useCleanCache: true });
+        mockery.warnOnUnregistered(false);
+        done();
+    });
+
+    afterEach(function(done){
+        mockery.resetCache();
         mockery.deregisterAll();
         done();
     });
@@ -29,7 +22,16 @@ describe('graylog-logger',function(){
 
     it('Should be able to transform the content passed in', function(done){
 
-        var logger = graylogLogger({});
+        const graygelfMock = function(){
+            return {
+                raw : function(arg) { return arg; }
+            }
+        };
+
+
+        mockery.registerMock('graygelf',graygelfMock);
+
+        let logger = require('../lib/graylog-logger.js')({});
 
         expect(logger.warn({hey: 'yo'})).to.have.property('short_message');
         expect(logger.warn({hey: 'yo'})['short_message']).to.equal('_');
@@ -48,7 +50,7 @@ describe('graylog-logger',function(){
     });
 
     it('Should contain all the log levels', function(done){
-        var logger = graylogLogger({});
+        let logger = require('../lib/graylog-logger.js')({});
         expect(Object.keys(logger).length).to.equal(9); // 8 level, there is an alias called 'log -> info'
         done();
     });

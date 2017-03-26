@@ -2,7 +2,6 @@
 "use strict";
 const chai = require('chai');
 const expect = chai.expect;
-const mockery = require('mockery');
 
 
 var decorate = require('../util/decorate.js');
@@ -10,9 +9,6 @@ var decorate = require('../util/decorate.js');
 
 
 describe('logger', function () {
-    after(function(done){
-        done();
-    });
 
     it('should be able to decorate a function correctly',function(done){
         let fn = function(arg){
