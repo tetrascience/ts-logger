@@ -31,6 +31,9 @@ let logger = function(transport, config){
         baseLogger[method] = decorate(originalFn,config);
     }
 
+    // add a debounced console log for debugging purpose
+    baseLogger.debounce = _.debounce(console.log, 1000);
+
     return baseLogger;
 };
 
