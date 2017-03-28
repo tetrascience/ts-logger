@@ -54,7 +54,8 @@ let logger = function (transport, config) {
 
 
     // add a debounced method to logger to compress certain debug log / error
-    baseLogger.debounce = _.debounce(baseLogger.info, 1000, { leading: true, trailing: false });
+    // todo: use throttle instead of debounce
+    baseLogger.debounce = _.throttle(baseLogger.info, 1000);
 
     return baseLogger;
 };
