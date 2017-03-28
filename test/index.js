@@ -8,7 +8,7 @@ const mockery = require('mockery');
 describe('index', function () {
 
     beforeEach(function (done) {
-        mockery.enable({ useCleanCache: true });
+        mockery.enable({useCleanCache: true});
         mockery.warnOnUnregistered(false);
         done();
     });
@@ -72,5 +72,75 @@ describe('index', function () {
         logger.debug('test');
         expect(logCount).to.equal(2);
         done();
-    })
+    });
+
+    it('Should be log to console in debug_mode', function (done) {
+
+        let consoleCount = 0;
+
+        let decorateMock = function (fn) {
+            return fn;
+        };
+
+        let graylogMock = function () {
+            return {
+                info: () => {
+                },
+                debug: () => {
+                }
+            }
+        };
+
+        let consoleMock = function () {
+            return {
+                info: () => {
+                    consoleCount++;
+                },
+                debug: () => {
+                    consoleCount++;
+                }
+            }
+        };
+
+
+        mockery.registerMock('./util/decorate.js', decorateMock);
+        mockery.registerMock('./lib/graylog-logger', graylogMock);
+        mockery.registerMock('./lib/console-logger', consoleMock);
+
+        process.env.DEBUG_MODE = true;
+        let logger = require('../index.js')('graylog', {});
+        logger.info('test');
+        logger.debug('test');
+        expect(consoleCount).to.equal(2);
+        process.env.DEBUG_MODE = false;
+        done();
+    });
+
+    it('should be able to debounce the logging', function(done){
+        let consoleCount = 0;
+
+        let consoleMock = function () {
+            return {
+                info: () => {
+                    consoleCount++;
+                }
+            }
+        };
+
+        mockery.registerMock('./lib/console-logger', consoleMock);
+        let logger = require('../')('console');
+
+        let tick = setInterval(()=>{
+            logger.debounce(Math.random());
+        }, 10);
+
+        setTimeout(()=>{
+            clearInterval(tick);
+        },200);
+
+        setTimeout(()=>{
+            expect(consoleCount).to.be.equal(1);
+            done();
+        },1500);
+    });
 });
