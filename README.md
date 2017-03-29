@@ -10,6 +10,13 @@ npm install tetrascience/ts-logger --save
 
 ## Usage
 
+### `throttle`
+The throttle waiting time is 1 second.
+```
+let logger = require('ts-logger')('console');
+logger.throttle.error(new Error('something wrong'));
+```
+
 ### `graylog`
 ```
 let logger = require('ts-logger')('graylog', {

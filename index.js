@@ -31,16 +31,15 @@ let logger = function (transport, config) {
             baseLogger = consoleL;
     }
 
-    // decorate the base logger
-    // always print to console
+    // decorate the base logger if base logger is NOT console
+    // always print to console if the base logger is NOT console
     // todo: consider to use winston
-    // todo: disable console logging beyond debug mode
     if (transport !== 'console') {
         for (let method in baseLogger) {
             let originalFn = baseLogger[method];
             let decoratedFn = decorate(originalFn, config);
 
-            // add console log to in debug mode
+            // add console log to base logger in debug mode
             if (process.env.DEBUG_MODE) {
                 baseLogger[method]  = function (arg) {
                     decoratedFn(arg);
@@ -49,13 +48,12 @@ let logger = function (transport, config) {
             } else {
                 baseLogger[method] = decoratedFn;
             }
-
-
         }
     }
 
 
-    // add a throttle method to logger to compress such that logs do not get too crazy
+    // add a throttle method to logger such that logs do not get too crazy
+    // when there are hundreds of data points, the logs, if not throttled, can be overwhelming to digest/debug
     let throttledLogger = {};
     for (let method in baseLogger){
         throttledLogger[method] = _.throttle(baseLogger[method], 1000, { trailing: false });
