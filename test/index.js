@@ -116,7 +116,7 @@ describe('index', function () {
         done();
     });
 
-    it('should be able to debounce the logging', function(done){
+    it('should be able to debounce the logging when transport is console', function(done){
         let consoleCount = 0;
 
         let consoleMock = function () {
@@ -131,12 +131,40 @@ describe('index', function () {
         let logger = require('../')('console');
 
         let tick = setInterval(()=>{
-            logger.debounce(Math.random());
+            logger.throttle.info(Math.random());
         }, 10);
 
         setTimeout(()=>{
             clearInterval(tick);
-        },200);
+        },800);
+
+        setTimeout(()=>{
+            expect(consoleCount).to.be.equal(1);
+            done();
+        },1500);
+    });
+
+    it('should be able to debounce the logging when transport is graylog', function(done){
+        let consoleCount = 0;
+
+        let graylogMock = function () {
+            return {
+                info: () => {
+                    consoleCount++;
+                }
+            }
+        };
+
+        mockery.registerMock('./lib/graylog-logger', graylogMock);
+        let logger = require('../')('graylog');
+
+        let tick = setInterval(()=>{
+            logger.throttle.info(Math.random());
+        }, 10);
+
+        setTimeout(()=>{
+            clearInterval(tick);
+        },800);
 
         setTimeout(()=>{
             expect(consoleCount).to.be.equal(1);

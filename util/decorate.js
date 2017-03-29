@@ -18,7 +18,7 @@ module.exports = function decorate(fn, config){
     return function(arg){
 
         // if not an object, turn arg into an object
-        if (_.isString(arg)){
+        if (!_.isObject(arg)){
             arg = {
                 message: arg
             }

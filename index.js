@@ -49,13 +49,18 @@ let logger = function (transport, config) {
             } else {
                 baseLogger[method] = decoratedFn;
             }
+
+
         }
     }
 
 
-    // add a debounced method to logger to compress certain debug log / error
-    // todo: use throttle instead of debounce
-    baseLogger.debounce = _.throttle(baseLogger.info, 1000);
+    // add a throttle method to logger to compress such that logs do not get too crazy
+    let throttledLogger = {};
+    for (let method in baseLogger){
+        throttledLogger[method] = _.throttle(baseLogger[method], 1000, { trailing: false });
+    }
+    baseLogger.throttle = throttledLogger;
 
     return baseLogger;
 };
