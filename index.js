@@ -31,8 +31,8 @@ let logger = function (transport, config) {
             baseLogger = consoleL;
     }
 
-    // decorate the base logger if base logger is NOT console
-    // always print to console if the base logger is NOT console
+    // 1. decorate the base logger if base logger is NOT console
+    // 2. always print to console if the base logger is NOT console AND it's debug mode
     // todo: consider to use winston
     if (transport !== 'console') {
         for (let method in baseLogger) {
@@ -40,7 +40,7 @@ let logger = function (transport, config) {
             let decoratedFn = decorate(originalFn, config);
 
             // add console log to base logger in debug mode
-            if (process.env.DEBUG_MODE) {
+            if (process.env.DEBUG_MODE || config.debugMode) {
                 baseLogger[method]  = function (arg) {
                     decoratedFn(arg);
                     consoleL[method](arg);

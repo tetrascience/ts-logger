@@ -116,7 +116,7 @@ describe('index', function () {
         done();
     });
 
-    it('should be able to debounce the logging when transport is console', function(done){
+    it('should be able to throttle the logging when transport is console', function(done){
         let consoleCount = 0;
 
         let consoleMock = function () {
@@ -144,7 +144,7 @@ describe('index', function () {
         },1500);
     });
 
-    it('should be able to debounce the logging when transport is graylog', function(done){
+    it('should be able to throttle the logging when transport is graylog', function(done){
         let consoleCount = 0;
 
         let graylogMock = function () {
