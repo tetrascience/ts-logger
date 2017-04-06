@@ -14,6 +14,9 @@ npm install tetrascience/ts-logger#docker --save
 Pass in  the transport and a config object, such as
 
 ```
+let config = {
+    service: 'ts-microservice-1'
+}
 let logger = require('ts-logger')(TRANSPORT, configObj);
 logger.error(new Error('something is wrong'));
 logger.info(1);
@@ -22,13 +25,17 @@ logger.info({
     key1: 'value1',
     key2: 'value2'
 })
+logger.info({
+    message: 'something interesting',
+    body: 'more detailed description'
+})
 ```
 
-You can pass in various types of things to log, the logger makes sure that what you passed in is transformed and adapted properly for the transport.
+You can pass in various types of things to log (object, error object, string, number), the logger makes sure that what you passed in is decorated with the proper meta based from the config, transformed and adapted properly for the transport. Check out the details here. 
 
 Here are the transports we support
-* [graylog](#graylog)
-* [console](#console)
+* [graylog](#transport-graylog)
+* [console](#transport-console)
 
 Here are the logging features we support
 * throttle
@@ -44,7 +51,9 @@ let logger = require('ts-logger')('graylog', {
 });
 logger.info('something to log');
 logger.debug({
-    key1: 'value1'
+    key1: 'value1',
+    message: 'concise debug log',
+    body: 'more detailed debug log'
 })
 ```
  
@@ -66,12 +75,14 @@ The throttled logger has a waiting time of 1 second by default
 let logger = require('ts-logger')('console');
 logger.throttle.error(new Error('something wrong'));
 ```
-
 ### Logging feature: `DEBUG_MODE`
-In debug mode, console transport will also be used *in addition to* the chosen transport, if it was not console transport.
+In debug mode, console transport will also be used *in addition to* the chosen transport, if it was not console transport. The debug mode can be set using two methods:
+* environmental variable: process.env.DEBUG_MODE
+* `config.debug_mode`
 
-
-
+### Logging feature: `decoration`
+#### `decoration`
+documents to be added. for now, take a look at utils/decorate.js
 
 ## Test
 ```
