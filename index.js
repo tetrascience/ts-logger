@@ -40,7 +40,7 @@ let logger = function (transport, config) {
             let decoratedFn = decorate(originalFn, config);
 
             // add console log to base logger in debug mode
-            if (process.env.DEBUG_MODE || config.debugMode) {
+            if (process.env.DEBUG_MODE || config.debug_mode || config.debugMode) {
                 baseLogger[method]  = function (arg) {
                     decoratedFn(arg);
                     consoleL[method](arg);
