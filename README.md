@@ -38,8 +38,10 @@ Here are the transports we support
 * [console](#transport-console)
 
 Here are the logging features we support
-* throttle
-* debug mode
+* [throttle](#feature-decoration)
+* [debug mode]((#feature-debug-mode))
+* [decoration](#feature-decoration)
+* [type](#feature-type)
 
 
 
@@ -77,13 +79,13 @@ original input will be the `message` field.
 #### Transport: `file`
 This transport is NOT actively maintained, thus *NOT* recommended.
 
-#### Logging feature: `throttle`
+#### Feature: `throttle`
 The throttled logger has a waiting time of 1 second by default
 ```
 let logger = require('ts-logger')('console');
 logger.throttle.error(new Error('something wrong'));
 ```
-### Logging feature: `DEBUG_MODE`
+### Feature: `debug mode`
 In debug mode, console transport will also be used *in addition to* the chosen transport, if it was not console transport. 
 The debug mode can be set using two methods:
 * environmental variable: process.env.DEBUG_MODE
@@ -97,7 +99,7 @@ let logger = require('ts-logger')('graylog', {
 logger.info('something to log');
 
 ```
-### Logging feature: `decoration`
+### Feature: `decoration`
 Input to the logger will always be converted into an object. 
 If the original input is an string or number, it will be converted into object. 
 The original input becomes the `message` field of the object. 
@@ -106,7 +108,7 @@ The following fields in the config object will also be attached to object:
 * `service`, which is used to tag the name of the service, such as tspower,
 * `NODE_ENV`, which is used to tag the application environment. 
 
-### Logging recommendation: `type`
+### Feature: `type`
 It's highly recommended that you compile a list of well defined log types, such as device-heartbeat, service-restart and etc. 
 It will help you to understand the distribution of your logs and quickly identify the logs of interest in your search. 
 Refer to this [example](https://github.com/tetrascience/tsboss/blob/docker/utils/logger.js) from tspower.  
