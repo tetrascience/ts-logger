@@ -1,7 +1,8 @@
 # ts-logger
 
 ts-logger module integrates Graylog, file logger and console log together. 
-Based on the chosen transport, the logger will be sending logs to different destinations.
+Based on the chosen transport, the logger will be sending logs to different destinations. 
+You can read more about the [transports](#transports) and [features](#features) in the following sections. 
 
 ## Installation
 ```
@@ -31,20 +32,22 @@ logger.info({
 })
 ```
 
-You can pass in various types of things to log (object, error object, string, number), the logger makes sure that what you passed in is decorated with the proper meta based from the config, transformed and adapted properly for the transport. Check out the details here. 
+You can pass in various types of things to log (object, error object, string, number), 
+the logger makes sure that what you passed in is decorated with the proper meta data based from the config, 
+transformed and adapted properly for the transport. 
 
 Here are the transports we support
 * [graylog](#transport-graylog)
 * [console](#transport-console)
 
-Here are the logging features we support
+Beyond the transports, ts-logger also supports the following logging features
 * [throttle](#feature-decoration)
 * [debug mode]((#feature-debug-mode))
 * [decoration](#feature-decoration)
 * [type](#feature-type)
 
 
-
+### Transports
 #### Transport: `graylog`
 ```
 let logger = require('ts-logger')('graylog', {
@@ -79,13 +82,16 @@ original input will be the `message` field.
 #### Transport: `file`
 This transport is NOT actively maintained, thus *NOT* recommended.
 
+
+### Features
+
 #### Feature: `throttle`
 The throttled logger has a waiting time of 1 second by default
 ```
 let logger = require('ts-logger')('console');
 logger.throttle.error(new Error('something wrong'));
 ```
-### Feature: `debug mode`
+#### Feature: `debug mode`
 In debug mode, console transport will also be used *in addition to* the chosen transport, if it was not console transport. 
 The debug mode can be set using two methods:
 * environmental variable: process.env.DEBUG_MODE
@@ -99,7 +105,7 @@ let logger = require('ts-logger')('graylog', {
 logger.info('something to log');
 
 ```
-### Feature: `decoration`
+#### Feature: `decoration`
 Input to the logger will always be converted into an object. 
 If the original input is an string or number, it will be converted into object. 
 The original input becomes the `message` field of the object. 
@@ -108,7 +114,7 @@ The following fields in the config object will also be attached to object:
 * `service`, which is used to tag the name of the service, such as tspower,
 * `NODE_ENV`, which is used to tag the application environment. 
 
-### Feature: `type`
+#### Feature: `type`
 It's highly recommended that you compile a list of well defined log types, such as device-heartbeat, service-restart and etc. 
 It will help you to understand the distribution of your logs and quickly identify the logs of interest in your search. 
 Refer to this [example](https://github.com/tetrascience/tsboss/blob/docker/utils/logger.js) from tspower.  
@@ -164,5 +170,6 @@ More documentation can be found at
 * https://tetrascience.atlassian.net/wiki/display/TSD/Log+Levels
 
 ## Todo: 
+* use npm test for tests
 * check array
 * add logger.extendTypes as a function
