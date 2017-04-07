@@ -65,6 +65,7 @@ logger.info({
 })
 ```
 If an object is passed in, require('util').inspect will be invoked (with default settings) to get a string representation of the object.
+Read about util.inspect [here](https://nodejs.org/api/util.html#util_util_inspect_object_options).
 
 #### Transport: `file`
 This transport is NOT actively maintained, thus *NOT* recommended.
