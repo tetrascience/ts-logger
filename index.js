@@ -6,7 +6,15 @@ const decorate = require('./util/decorate.js');
 const graylogLogger = require('./lib/graylog-logger');
 const fileLogger = require('./lib/file-logger');
 const consoleLogger = require('./lib/console-logger');
-
+const commonTypes = {
+    WORKER_CRASH: 'worker-crash',
+    WORKER_START: 'worker-start',
+    QUEUE_STALLED: 'queue-stalled',
+    SERVICE_CRASH: 'service-crash',
+    SERVICE_START: 'service-start',
+    QUEUE_ANALYSIS_FAILED: 'queue-analysis-failed',
+    UNKNOWN: 'unknown',
+};
 
 let logger = function (transport, config) {
     let baseLogger;
@@ -33,7 +41,6 @@ let logger = function (transport, config) {
 
     // 1. decorate the base logger if base logger is NOT console
     // 2. always print to console if the base logger is NOT console AND it's debug mode
-    // todo: consider to use winston
     if (transport !== 'console') {
         for (let method in baseLogger) {
             let originalFn = baseLogger[method];
@@ -59,6 +66,15 @@ let logger = function (transport, config) {
         throttledLogger[method] = _.throttle(baseLogger[method], 1000, { trailing: false });
     }
     baseLogger.throttle = throttledLogger;
+
+    baseLogger.types = commonTypes;
+    baseLogger.commonTypes = commonTypes;
+
+    baseLogger.extendTypes = (extraTypes)=>{
+        baseLogger.types = _.assign(baseLogger.types, extraTypes);
+    };
+
+    baseLogger.listTypes = () => baseLogger.types;
 
     return baseLogger;
 };

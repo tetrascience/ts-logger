@@ -19,6 +19,27 @@ describe('index', function () {
         done();
     });
 
+    it('should be able to list common log types supported', function(done){
+        const logger = require('../')();
+        const types = logger.listTypes();
+        expect(typeof types).to.be.equal('object');
+        expect(Object.keys(types).length).to.be.above(1);
+        done();
+    });
+
+    it('should be able to extend the log types', function(done){
+        const logger = require('../')();
+        const types = logger.listTypes();
+        const originalNumKeys = Object.keys(types).length;
+        logger.extendTypes({
+            SOME_KEY_KEY: 'random-key-key'
+        });
+        const newTypes = logger.listTypes();
+        const numKeys = Object.keys(newTypes).length;
+        expect(numKeys-originalNumKeys).to.equal(1);
+        done();
+    });
+
     it('Should be able to decorate the base logger', function (done) {
 
         let decorateCount = 0;
@@ -171,4 +192,6 @@ describe('index', function () {
             done();
         },1500);
     });
+
+
 });

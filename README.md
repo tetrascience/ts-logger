@@ -7,6 +7,9 @@ You can read more about the [transports](#transports) and [features](#features) 
 ## Installation
 ```
 npm install tetrascience/ts-logger#docker --save
+
+// if for production
+npm install tetrascience/ts-logger#docker --production
 ```
 
 ## Usage
@@ -115,14 +118,16 @@ The following fields in the config object will also be attached to object:
 * `NODE_ENV`, which is used to tag the application environment. 
 
 #### Feature: `type`
-It's highly recommended that you compile a list of well defined log types, such as device-heartbeat, service-restart and etc. 
+It's highly recommended that you compile a list of well defined log types, such as *device-heartbeat*, *service-restart* and etc. 
 It will help you to understand the distribution of your logs and quickly identify the logs of interest in your search. 
-Refer to this [example](https://github.com/tetrascience/tsboss/blob/docker/utils/logger.js) from tspower.  
+Refer to this [example](https://github.com/tetrascience/tsboss/blob/docker/utils/logger.js) from tspower. All your log types can 
+be accessed using `logger.types`. The logger will automatically attach `type = commonTypes.UNKNOWN` 
+to the input if there is no type. 
 
-The logger provides a list of the common log types for you to use and you can access them from `logger.nativeTypes`. 
+The logger provides a list of the common log types for you to use and you can access them using `logger.commonTypes`. 
 These are the common types of logs in the context of distributed system and microservice. 
 ```
-let logger.nativeTypes = {
+const commonTypes = {
     WORKER_CRASH: 'worker-crash',
     WORKER_START: 'worker-start',
     QUEUE_STALLED: 'queue-stalled',
@@ -133,18 +138,17 @@ let logger.nativeTypes = {
 };
 ```
 
-The logger will automatically attach `type = types.UNKNOWN` to the log object if there is no type. 
-
-You can take advantage of the native types like the following example and come up with your own logger:
+You can take advantage of the common types like the following example and add extra types using `logger.extendTypes`. Be aware that
+do NOT use hyphen in the key of the extra type object. 
 ```
-let tsLogger = require('ts-logger');
-let nativeTypes = tsLogger.nativeTypes;
-let types = _.extend(nativeTypes, {
-    SERVICE-SPECIFIC-BAHAVIOR-1: service-specific-behavior-1,
-    SERVICE-SPECIFIC-BAHAVIOR-2: service-specific-behavior-2
-});
-let logger = tsLogger('graylog', config);
-logger.types = logger.types;
+const tsLogger = require('ts-logger');
+const logger = tsLogger('graylog', config);
+const extraTypes = {
+    SERVICE_SPECIFIC_BAHAVIOR_1: service-specific-behavior-1,
+    SERVICE_SPECIFIC_BAHAVIOR_2: service-specific-behavior-2
+};
+// add your own log types
+logger.extendTypes(extraTypes); 
 
 // use one of the native types
 logger.info({
@@ -154,14 +158,14 @@ logger.info({
 
 // use the newly added type
 let err = new Error('service specific error');
-err.type = logger.types.SERVICE-SPECIFIC-BEHAVIOR-1;
+err.type = logger.types.SERVICE_SPECIFIC_BAHAVIOR_1;
 logger.error(err);
 ```
 
 ## Test
 ```
 npm install -g mocha
-mocha test/
+npm test
 ```
 
 ## Reference
@@ -170,6 +174,7 @@ More documentation can be found at
 * https://tetrascience.atlassian.net/wiki/display/TSD/Log+Levels
 
 ## Todo: 
-* use npm test for tests
-* check array
+* what if the log input is an array
 * add logger.extendTypes as a function
+* migrate to ES6, node6 style
+
