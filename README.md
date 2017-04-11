@@ -54,7 +54,7 @@ Here are the transports we support
 * [console](#transport-console)
 
 Beyond the transports, ts-logger also supports the following logging features
-* [throttle](#feature-decoration)
+* [throttle](#feature-throttle)
 * [debug mode]((#feature-debug-mode))
 * [decoration](#feature-decoration)
 * [type](#feature-type)
@@ -62,7 +62,7 @@ Beyond the transports, ts-logger also supports the following logging features
 
 ### Transports
 #### Transport: `graylog`
-```
+```javascript
 const logger = require('ts-logger')('graylog', {
    graylogHost: 'http://localhost',
    graylogPort: '12201'
@@ -81,7 +81,7 @@ logger.error(new Error('something bad'));
 original input will be the `message` field. 
   
 #### Transport: `console`
-```
+```javascript
 const logger = require('ts-logger')('console')
 logger.info({
     key1: 'value1'
@@ -104,13 +104,13 @@ When your log happens very fast, it's helpful to throttle the logger.
 [Lodash's default throttling behavior](https://lodash.com/docs/4.17.4#throttle) is used here.  
 A waiting time of 1 second by default is used.
 
-```
+```javascript
 const logger = require('ts-logger')('console');
 logger.throttle.error(new Error('something wrong'));
 logger.throttle.debug('a debug log');
 ```
 You can adjust the throttle wait time by passing `throttle_wait` into the config object for the logger factory. For example:
-```
+```javascript
 // print the log at most every 2 seconds
 const logger = require('ts-logger')('console',{throttle_wait: 2000);
 logger.throttle.error(new Error('something wrong'));
@@ -120,7 +120,7 @@ logger.throttle.debug('a debug log');
 #### Feature: `debug mode`
 In debug mode, console transport will also be used *in addition to* the chosen transport, if it was not console transport. 
 The debug mode can be set using `config.debug_mode`
-```
+```javascript
 const logger = require('ts-logger')('graylog', {
    graylogHost: 'http://localhost',
    graylogPort: '12201'
@@ -146,7 +146,7 @@ to the input if there is no log type.
 
 The logger provides a list of the common log types for you to use and you can access them using `logger.commonTypes`. 
 These are the common types of logs in the context of distributed system and microservice. 
-```
+```javascript
 const commonTypes = {
     WORKER_CRASH: 'worker-crash',
     WORKER_START: 'worker-start',
@@ -160,7 +160,7 @@ const commonTypes = {
 
 You can take advantage of the common types like the following example and add extra types using `logger.extendTypes`. Be aware that
 do NOT use hyphen in the key of the extra type object. 
-```
+```javascript
 const tsLogger = require('ts-logger');
 const logger = tsLogger('graylog', config);
 const extraTypes = {
@@ -183,7 +183,7 @@ logger.error(err);
 ```
 
 ## Test
-```
+```bash
 npm install -g mocha
 npm test
 ```
