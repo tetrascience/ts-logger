@@ -15,17 +15,26 @@ npm install tetrascience/ts-logger#docker --production
 ## Usage
 
 ### Overview
-Pass in  the transport and a config object, such as
+Pass in  the transport and a config object to the loggerFactory (require('ts-logger')), such as
 
 ```
 const TRANSPORT = 'graylog';
 const config = {
-    service: 'ts-microservice-1'
+    service: 'ts-microservice-1',
+    NODE_ENV: 'customer-A'
 };
 const logger = require('ts-logger')(TRANSPORT, config);
-logger.error(new Error('something is wrong'));
+
+// error 
+let err = new Error('something is wrong');
+err.type = logger.types.SERVICE_CRASH;
+logger.error(err);
+
+// primitive type
 logger.info(1);
 logger.debug('Number of retry attempt: 17');
+
+// obj
 logger.info({
     key1: 'value1',
     key2: 'value2'
@@ -78,7 +87,8 @@ logger.info({
     key1: 'value1'
 })
 ```
-* If an object is passed in, require('util').inspect will be invoked (with default settings) to get a string representation of the object.
+* If an object is passed in, require('util').inspect will be invoked (with default settings) 
+to get a string representation of the object.
 Read about util.inspect [here](https://nodejs.org/api/util.html#util_util_inspect_object_options).
 * If you pass a non-object (something like number or string), it will be converted into an object and the 
 original input will be the `message` field. 
@@ -90,10 +100,12 @@ This transport is NOT actively maintained, thus please do *NOT* use.
 ### Features
 
 #### Feature: `throttle`
-The throttled logger has a waiting time of 1 second by default
+When your log happens very fast, it's helpful to throttle the logger.  
+A waiting time of 1 second by default.
 ```
 const logger = require('ts-logger')('console');
 logger.throttle.error(new Error('something wrong'));
+logger.throttle.debug('a debug log');
 ```
 #### Feature: `debug mode`
 In debug mode, console transport will also be used *in addition to* the chosen transport, if it was not console transport. 
@@ -109,19 +121,18 @@ logger.info('something to log'); // this will go to console as well
 ```
 #### Feature: `decoration`
 Input to the logger will always be converted into an object. 
-If the original input is an string or number, it will be converted into object. 
-The original input becomes the `message` field of the object. 
+If the original input is an string or number, it will become the `message` field of the object. 
 
-The following fields in the config object will also be attached to object: 
-* `service`, which is used to tag the name of the service, such as tspower,
-* `NODE_ENV`, which is used to tag the application environment. 
+The following fields in the config object will also be attached to that object: 
+* `service`, which is used to tag the name of the service, such as *tspower*, *tsfeed* or etc,
+* `NODE_ENV`, which is used to tag the application environment, such as *docker*, *customerA* and etc. 
 
 #### Feature: `type`
 It's highly recommended that you compile a list of well defined log types, such as *device-heartbeat*, *service-restart* and etc. 
 It will help you to understand the distribution of your logs and quickly identify the logs of interest in your search. 
-Refer to this [example](https://github.com/tetrascience/tsboss/blob/docker/utils/logger.js) from tspower. All your log types can 
-be accessed using `logger.types`. The logger will automatically attach `type = commonTypes.UNKNOWN` 
-to the input if there is no type. 
+Refer to this [example](https://github.com/tetrascience/tsboss/blob/docker/utils/logger.js) from *tspower* service. All your log types can 
+be accessed via `logger.types`. The logger will automatically attach `type = commonTypes.UNKNOWN` 
+to the input if there is no log type. 
 
 The logger provides a list of the common log types for you to use and you can access them using `logger.commonTypes`. 
 These are the common types of logs in the context of distributed system and microservice. 
@@ -149,7 +160,7 @@ const extraTypes = {
 // add your own log types
 logger.extendTypes(extraTypes); 
 
-// use one of the native types
+// use one of the common log types
 logger.info({
     type: logger.types.WORKER_CRASH
     process_id: '897214'

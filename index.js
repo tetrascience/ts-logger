@@ -16,7 +16,7 @@ const commonTypes = {
     UNKNOWN: 'unknown',
 };
 
-let logger = function (transport, config) {
+let loggerFactory = function (transport, config) {
     let baseLogger;
 
     assert(!config || _.isObject(config), 'the second argument, if available, must be a config object');
@@ -89,5 +89,5 @@ let logger = function (transport, config) {
 };
 
 
-module.exports = logger;
+module.exports = loggerFactory;
 
