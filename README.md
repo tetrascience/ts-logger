@@ -18,21 +18,22 @@ npm install tetrascience/ts-logger#docker --production
 Pass in  the transport and a config object, such as
 
 ```
-let config = {
+const TRANSPORT = 'graylog';
+const config = {
     service: 'ts-microservice-1'
-}
-let logger = require('ts-logger')(TRANSPORT, configObj);
+};
+const logger = require('ts-logger')(TRANSPORT, config);
 logger.error(new Error('something is wrong'));
 logger.info(1);
 logger.debug('Number of retry attempt: 17');
 logger.info({
     key1: 'value1',
     key2: 'value2'
-})
+});
 logger.info({
     message: 'something interesting',
     body: 'more detailed description'
-})
+});
 ```
 
 You can pass in various types of things to log (object, error object, string, number), 
@@ -53,7 +54,7 @@ Beyond the transports, ts-logger also supports the following logging features
 ### Transports
 #### Transport: `graylog`
 ```
-let logger = require('ts-logger')('graylog', {
+const logger = require('ts-logger')('graylog', {
    graylogHost: 'http://localhost',
    graylogPort: '12201'
 });
@@ -72,7 +73,7 @@ original input will be the `message` field.
   
 #### Transport: `console`
 ```
-let logger = require('ts-logger')('console')
+const logger = require('ts-logger')('console')
 logger.info({
     key1: 'value1'
 })
@@ -83,7 +84,7 @@ Read about util.inspect [here](https://nodejs.org/api/util.html#util_util_inspec
 original input will be the `message` field. 
 
 #### Transport: `file`
-This transport is NOT actively maintained, thus *NOT* recommended.
+This transport is NOT actively maintained, thus please do *NOT* use.
 
 
 ### Features
@@ -91,21 +92,19 @@ This transport is NOT actively maintained, thus *NOT* recommended.
 #### Feature: `throttle`
 The throttled logger has a waiting time of 1 second by default
 ```
-let logger = require('ts-logger')('console');
+const logger = require('ts-logger')('console');
 logger.throttle.error(new Error('something wrong'));
 ```
 #### Feature: `debug mode`
 In debug mode, console transport will also be used *in addition to* the chosen transport, if it was not console transport. 
-The debug mode can be set using two methods:
-* environmental variable: process.env.DEBUG_MODE
-* `config.debug_mode`
+The debug mode can be set using `config.debug_mode`
 ```
-let logger = require('ts-logger')('graylog', {
+const logger = require('ts-logger')('graylog', {
    graylogHost: 'http://localhost',
    graylogPort: '12201'
    debug_mode: true              // enable the debug mode using the config
 });
-logger.info('something to log');
+logger.info('something to log'); // this will go to console as well
 
 ```
 #### Feature: `decoration`
@@ -174,6 +173,8 @@ More documentation can be found at
 * https://tetrascience.atlassian.net/wiki/display/TSD/Log+Levels
 
 ## Todo: 
+* sanitize the user input for the config obj
+* let user config the throttling using config. 
 * what if the log input is an array
 * add logger.extendTypes as a function
 * migrate to ES6, node6 style

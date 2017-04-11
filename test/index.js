@@ -19,6 +19,15 @@ describe('index', function () {
         done();
     });
 
+    it('should be able to configure the throttle wait', function(done){
+        const logger =require('../')();
+        expect(logger.config).to.have.property('throttle_wait');
+        const logger2 = require('../')('console',{throttle_wait: 50});
+        expect(logger2.config.throttle_wait).to.be.equal(50);
+        expect(require('../').bind(null,'console',{throttle_wait: -5})).to.throw(Error);
+        done();
+    });
+
     it('should be able to list common log types supported', function(done){
         const logger = require('../')();
         const types = logger.listTypes();
@@ -95,7 +104,7 @@ describe('index', function () {
         done();
     });
 
-    it('Should be log to console in debug_mode', function (done) {
+    it('Should be log to console in debug mode ', function (done) {
 
         let consoleCount = 0;
 
@@ -128,19 +137,22 @@ describe('index', function () {
         mockery.registerMock('./lib/graylog-logger', graylogMock);
         mockery.registerMock('./lib/console-logger', consoleMock);
 
-        process.env.DEBUG_MODE = true;
-        let logger = require('../index.js')('graylog', {});
+
+        const logger = require('../index.js')('graylog', {});
+        const logger2 = require('../index.js')('graylog',{debug_mode: true});
         logger.info('test');
         logger.debug('test');
+        expect(consoleCount).to.equal(0);
+        logger2.info('test');
+        logger2.debug('test');
         expect(consoleCount).to.equal(2);
-        process.env.DEBUG_MODE = false;
         done();
     });
 
     it('should be able to throttle the logging when transport is console', function(done){
         let consoleCount = 0;
 
-        let consoleMock = function () {
+        const consoleMock = function () {
             return {
                 info: () => {
                     consoleCount++;
@@ -149,6 +161,7 @@ describe('index', function () {
         };
 
         mockery.registerMock('./lib/console-logger', consoleMock);
+
         let logger = require('../')('console');
 
         let tick = setInterval(()=>{
@@ -192,6 +205,5 @@ describe('index', function () {
             done();
         },1500);
     });
-
 
 });

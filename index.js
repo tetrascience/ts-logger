@@ -22,7 +22,10 @@ let logger = function (transport, config) {
     assert(!config || _.isObject(config), 'the second argument, if available, must be a config object');
     config = config || {};
     config.transport = transport;
-
+    config.throttle_wait = config.throttle_wait || 1000;
+    config.debug_mode = config.debug_mode || false;
+    assert(_.isNumber(config.throttle_wait) && config.throttle_wait > 10,'config.throttle_wait should be a number, greater then 10ms');
+    assert(_.isBoolean(config.debug_mode), 'config.debug_mode should be a boolean');
 
     let consoleL = consoleLogger(config);
 
@@ -39,6 +42,8 @@ let logger = function (transport, config) {
             baseLogger = consoleL;
     }
 
+
+
     // 1. decorate the base logger if base logger is NOT console
     // 2. always print to console if the base logger is NOT console AND it's debug mode
     if (transport !== 'console') {
@@ -47,7 +52,7 @@ let logger = function (transport, config) {
             let decoratedFn = decorate(originalFn, config);
 
             // add console log to base logger in debug mode
-            if (process.env.DEBUG_MODE || config.debug_mode || config.debugMode) {
+            if (config.debug_mode) {
                 baseLogger[method]  = function (arg) {
                     decoratedFn(arg);
                     consoleL[method](arg);
@@ -59,14 +64,16 @@ let logger = function (transport, config) {
     }
 
 
+
     // add a throttle method to logger such that logs do not get too crazy
     // when there are hundreds of data points, the logs, if not throttled, can be overwhelming to digest/debug
     let throttledLogger = {};
     for (let method in baseLogger){
-        throttledLogger[method] = _.throttle(baseLogger[method], 1000, { trailing: false });
+        throttledLogger[method] = _.throttle(baseLogger[method], config.throttle_wait || 1000, { trailing: false });
     }
     baseLogger.throttle = throttledLogger;
 
+    // types
     baseLogger.types = commonTypes;
     baseLogger.commonTypes = commonTypes;
 
@@ -76,6 +83,8 @@ let logger = function (transport, config) {
 
     baseLogger.listTypes = () => baseLogger.types;
 
+    // attach the config object
+    baseLogger.config = config;
     return baseLogger;
 };
 
