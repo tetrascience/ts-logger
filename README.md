@@ -100,13 +100,23 @@ This transport is NOT actively maintained, thus please do *NOT* use.
 ### Features
 
 #### Feature: `throttle`
-When your log happens very fast, it's helpful to throttle the logger.  
-A waiting time of 1 second by default.
+When your log happens very fast, it's helpful to throttle the logger. 
+[Lodash's default throttling behavior](https://lodash.com/docs/4.17.4#throttle) is used here.  
+A waiting time of 1 second by default is used.
+
 ```
 const logger = require('ts-logger')('console');
 logger.throttle.error(new Error('something wrong'));
 logger.throttle.debug('a debug log');
 ```
+You can adjust the throttle wait time by passing `throttle_wait` into the config object for the logger factory. For example:
+```
+// print the log at most every 2 seconds
+const logger = require('ts-logger')('console',{throttle_wait: 2000);
+logger.throttle.error(new Error('something wrong'));
+logger.throttle.debug('a debug log');
+```
+
 #### Feature: `debug mode`
 In debug mode, console transport will also be used *in addition to* the chosen transport, if it was not console transport. 
 The debug mode can be set using `config.debug_mode`
