@@ -16,7 +16,12 @@ const commonTypes = {
     UNKNOWN: 'unknown',
 };
 
-
+/**
+ * A factory function that creates a logger based on the config and transport
+ * @param {String} transport 'graylog' or 'console'
+ * @param {Object} config a config object fo the logger
+ * @return {Object} logger
+ */
 let loggerFactory = function (transport, config) {
     let baseLogger;
 
@@ -75,7 +80,7 @@ let loggerFactory = function (transport, config) {
     logger.throttle = throttledLogger;
 
     // types
-    logger.types = commonTypes;
+    logger.types = _.clone(commonTypes);
     logger.commonTypes = commonTypes;
 
     logger.extendTypes = (extraTypes)=>{
