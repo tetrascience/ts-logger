@@ -16,6 +16,7 @@ const commonTypes = {
     UNKNOWN: 'unknown',
 };
 
+
 let loggerFactory = function (transport, config) {
     let baseLogger;
 
@@ -43,6 +44,8 @@ let loggerFactory = function (transport, config) {
     }
 
 
+    // create the new logger
+    let logger = _.cloneDeep(baseLogger);
 
     // 1. decorate the base logger if base logger is NOT console
     // 2. always print to console if the base logger is NOT console AND it's debug mode
@@ -53,39 +56,37 @@ let loggerFactory = function (transport, config) {
 
             // add console log to base logger in debug mode
             if (config.debug_mode) {
-                baseLogger[method]  = function (arg) {
+                logger[method]  = function (arg) {
                     decoratedFn(arg);
                     consoleL[method](arg);
                 }
             } else {
-                baseLogger[method] = decoratedFn;
+                logger[method] = decoratedFn;
             }
         }
     }
-
-
 
     // add a throttle method to logger such that logs do not get too crazy
     // when there are hundreds of data points, the logs, if not throttled, can be overwhelming to digest/debug
     let throttledLogger = {};
     for (let method in baseLogger){
-        throttledLogger[method] = _.throttle(baseLogger[method], config.throttle_wait || 1000, { trailing: false });
+        throttledLogger[method] = _.throttle(logger[method], config.throttle_wait || 1000, { trailing: false });
     }
-    baseLogger.throttle = throttledLogger;
+    logger.throttle = throttledLogger;
 
     // types
-    baseLogger.types = commonTypes;
-    baseLogger.commonTypes = commonTypes;
+    logger.types = commonTypes;
+    logger.commonTypes = commonTypes;
 
-    baseLogger.extendTypes = (extraTypes)=>{
-        baseLogger.types = _.assign(baseLogger.types, extraTypes);
+    logger.extendTypes = (extraTypes)=>{
+        logger.types = _.assign(logger.types, extraTypes);
     };
 
-    baseLogger.listTypes = () => baseLogger.types;
+    logger.listTypes = () => logger.types;
 
     // attach the config object
-    baseLogger.config = config;
-    return baseLogger;
+    logger.config = config;
+    return logger;
 };
 
 
